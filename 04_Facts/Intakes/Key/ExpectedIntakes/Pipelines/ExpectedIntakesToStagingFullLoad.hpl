@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>ExpectedIntakesToStagingFullLoad</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2025/01/03 14:55:04.912</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2025/01/03 14:55:04.912</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Expected Intakes From Infeed700</from>
+      <to>If Null</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>If Null</from>
+      <to>Expected Intakes Staging</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Expected Intakes From Infeed700</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Infeed700</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT	Keys.iKeyId AS KeyId,				
+				KeyLoads.iLoadId AS LoadId,
+				KeyTypes.KeyTypeId AS KeyTypeId,
+				Keys.iHaulierId AS HaulierId,
+				Keys.iDriverId AS DriverId,		
+				Keys.iLorryRegistrationId AS LorryRegistrationId,
+				Keys.iTrailerId AS TrailerId,
+				KeyLoads.iProductId AS RawMaterialId,
+				KeyLoads.iSupplierId AS SupplierId,
+				KeyLoads.iPitNumber AS PitId,
+				Keys.CreatedDT AS CreateOn,
+				KeyLoads.SiteID AS SiteId, -- ASK TIBOR OR SOMONE
+				KeyLoads.rExpectedAmount AS OrderedWeight,
+				KeyLoads.iSupplierWeight AS SupplierWeight,
+				dbo.StringClip(Keys.sKeyCode) AS ScheduleNumber,
+				dbo.StringClip(KeyLoads.sSupplierReference) AS SupplierDocket,
+				KeyLoadsSupplierDetails.LotNumber AS LotNumber,
+				KeyNotes.sNotes AS Notes,
+				COALESCE(DocketNumbers.DocketNumber, KeyLoads.iLoadId) AS DocketNumber
+
+    FROM		[Key].Keys
+	JOIN		[Key].KeyLinks ON Keys.iKeyId = KeyLinks.iKeyId
+	JOIN		[Key].KeyLoads ON KeyLinks.iLoadId = KeyLoads.iLoadId
+	JOIN		[Key].KeyTypes ON KeyTypes.KeyTypeId = Keys.iKeytype AND KeyTypes.Area = 'Intake'
+	LEFT JOIN	[Key].[DocketNumbers] on DocketNumbers.LoadId = KeyLoads.iLoadId
+	LEFT JOIN   [Key].[KeyLoadsSupplierDetails] ON [KeyLoadsSupplierDetails].iLoadId = [Key].KeyLoads.iLoadId
+	LEFT JOIN   [Key].[KeyNotes] ON [KeyNotes].iKeyId = [Key].[Keys].iKeyId
+
+	WHERE		Keys.cRecordStatus = 'A' AND KeyLoads.iLoadStatus =0</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>192</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Expected Intakes Staging</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>1000</commit>
+    <connection>Infeed700DWStaging</connection>
+    <fields>
+      <field>
+        <column_name>KeyId</column_name>
+        <stream_name>KeyId</stream_name>
+      </field>
+      <field>
+        <column_name>LoadId</column_name>
+        <stream_name>LoadId</stream_name>
+      </field>
+      <field>
+        <column_name>KeyTypeId</column_name>
+        <stream_name>KeyTypeId</stream_name>
+      </field>
+      <field>
+        <column_name>HaulierId</column_name>
+        <stream_name>HaulierId</stream_name>
+      </field>
+      <field>
+        <column_name>DriverId</column_name>
+        <stream_name>DriverId</stream_name>
+      </field>
+      <field>
+        <column_name>LorryRegistrationId</column_name>
+        <stream_name>LorryRegistrationId</stream_name>
+      </field>
+      <field>
+        <column_name>TrailerId</column_name>
+        <stream_name>TrailerId</stream_name>
+      </field>
+      <field>
+        <column_name>RawMaterialId</column_name>
+        <stream_name>RawMaterialId</stream_name>
+      </field>
+      <field>
+        <column_name>SupplierId</column_name>
+        <stream_name>SupplierId</stream_name>
+      </field>
+      <field>
+        <column_name>PitId</column_name>
+        <stream_name>PitId</stream_name>
+      </field>
+      <field>
+        <column_name>CreateOn</column_name>
+        <stream_name>CreateOn</stream_name>
+      </field>
+      <field>
+        <column_name>SiteId</column_name>
+        <stream_name>SiteId</stream_name>
+      </field>
+      <field>
+        <column_name>OrderedWeight</column_name>
+        <stream_name>OrderedWeight</stream_name>
+      </field>
+      <field>
+        <column_name>SupplierWeight</column_name>
+        <stream_name>SupplierWeight</stream_name>
+      </field>
+      <field>
+        <column_name>ScheduleNumber</column_name>
+        <stream_name>ScheduleNumber</stream_name>
+      </field>
+      <field>
+        <column_name>SupplierDocket</column_name>
+        <stream_name>SupplierDocket</stream_name>
+      </field>
+      <field>
+        <column_name>LotNumber</column_name>
+        <stream_name>LotNumber</stream_name>
+      </field>
+      <field>
+        <column_name>Notes</column_name>
+        <stream_name>Notes</stream_name>
+      </field>
+      <field>
+        <column_name>DocketNumber</column_name>
+        <stream_name>DocketNumber</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_field/>
+    <return_keys>N</return_keys>
+    <schema>[Key]</schema>
+    <specify_fields>Y</specify_fields>
+    <table>stg_factExpectedIntakes</table>
+    <tablename_field/>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>Y</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>640</xloc>
+      <yloc>192</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>If Null</name>
+    <type>IfNull</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+</fields>
+    <selectFields>N</selectFields>
+    <selectValuesType>Y</selectValuesType>
+    <setEmptyStringAll>N</setEmptyStringAll>
+    <valuetypes>
+      <valuetype>
+        <name>String</name>
+        <set_type_empty_string>N</set_type_empty_string>
+        <value>N/A</value>
+      </valuetype>
+      <valuetype>
+        <name>Number</name>
+        <set_type_empty_string>N</set_type_empty_string>
+        <value>0</value>
+      </valuetype>
+      <valuetype>
+        <name>Integer</name>
+        <set_type_empty_string>N</set_type_empty_string>
+        <value>-1</value>
+      </valuetype>
+      <valuetype>
+        <name>Date</name>
+        <set_type_empty_string>N</set_type_empty_string>
+        <value>01/01/1900</value>
+      </valuetype>
+    </valuetypes>
+    <attributes/>
+    <GUI>
+      <xloc>464</xloc>
+      <yloc>192</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

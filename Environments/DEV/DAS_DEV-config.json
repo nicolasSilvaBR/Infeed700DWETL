@@ -1,0 +1,63 @@
+{
+  "variables" : [ {
+    "name" : "SQLServerIPAddress",
+    "value" : "10.202.2.251",
+    "description" : "SQL Host"
+  }, {
+    "name" : "SQLServerInstance",
+    "value" : "DEVSQLSERVER2019",
+    "description" : "Instance Name"
+  }, {
+    "name" : "SQLUser",
+    "value" : "sa",
+    "description" : "Username"
+  }, {
+    "name" : "SQLPassword",
+    "value" : "1984Icm000",
+    "description" : "password"
+  }, {
+    "name" : "SQInfeed700LDatabaseName",
+    "value" : "Infeed700DAS",
+    "description" : "Infeed 700 database name"
+  }, {
+    "name" : "SQLPort",
+    "value" : "2019",
+    "description" : "Sql port"
+  }, {
+    "name" : "StagingDatabaseName",
+    "value" : "Infeed700DWStagingDAS",
+    "description" : "Staging Database"
+  }, {
+    "name" : "DataWarehouseName",
+    "value" : "Infeed700DWDAS",
+    "description" : "Data Warehouse name"
+  }, {
+    "name" : "EMailDestinationAddress",
+    "value" : "reports@icmcsl.ie dm@icmcsl.ie",
+    "description" : "Destination address of email alert"
+  }, {
+    "name" : "EMailSMTPServer",
+    "value" : "smtp.office365.com",
+    "description" : "SMTP Server name"
+  }, {
+    "name" : "EMailSMPTPort",
+    "value" : "587",
+    "description" : "SMTP Port number"
+  }, {
+    "name" : "EMailUserName",
+    "value" : "emailalerts@icmcsl.ie",
+    "description" : "email address authentication user"
+  }, {
+    "name" : "EMailPassword",
+    "value" : "1984Icm000",
+    "description" : "Authentication password"
+  }, {
+    "name" : "SiteName",
+    "value" : "Dairygold Lombardstown",
+    "description" : "Mill Name"
+  }, {
+    "name" : "SiteTLA",
+    "value" : "DGL",
+    "description" : "TLA for Mill"
+  } ]
+}

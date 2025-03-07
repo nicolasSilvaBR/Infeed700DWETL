@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>TrailersToStagingFullLoad</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2024/12/20 08:42:22.721</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2024/12/20 08:42:22.721</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Trailers from infeed700</from>
+      <to>Trailers To Staging</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Trailers To Staging</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>1000</commit>
+    <connection>Infeed700DWStaging</connection>
+    <fields>
+      <field>
+        <column_name>TrailerId</column_name>
+        <stream_name>TrailerId</stream_name>
+      </field>
+      <field>
+        <column_name>TrailerNumber</column_name>
+        <stream_name>TrailerNumber</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize1</column_name>
+        <stream_name>SectionSize1</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize2</column_name>
+        <stream_name>SectionSize2</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize3</column_name>
+        <stream_name>SectionSize3</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize4</column_name>
+        <stream_name>SectionSize4</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize5</column_name>
+        <stream_name>SectionSize5</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize6</column_name>
+        <stream_name>SectionSize6</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize7</column_name>
+        <stream_name>SectionSize7</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize8</column_name>
+        <stream_name>SectionSize8</stream_name>
+      </field>
+      <field>
+        <column_name>SectionSize9</column_name>
+        <stream_name>SectionSize9</stream_name>
+      </field>
+      <field>
+        <column_name>RFIDTAG</column_name>
+        <stream_name>RFIDTAG</stream_name>
+      </field>
+      <field>
+        <column_name>TrailerDescription</column_name>
+        <stream_name>TrailerDescription</stream_name>
+      </field>
+      <field>
+        <column_name>ValidFrom</column_name>
+        <stream_name>ValidFrom</stream_name>
+      </field>
+      <field>
+        <column_name>ValidTo</column_name>
+        <stream_name>ValidTo</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_field/>
+    <return_keys>N</return_keys>
+    <schema>[Contact]</schema>
+    <specify_fields>Y</specify_fields>
+    <table>stg_dimTrailers</table>
+    <tablename_field/>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>Y</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>432</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Trailers from infeed700</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Infeed700</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT 
+		Trailers.iTrailerId AS TrailerId,
+		Trailers.sTrailerNumber AS TrailerNumber, 
+		Trailers.iSectionSize1 AS SectionSize1,
+		Trailers.iSectionSize2 AS SectionSize2,
+		Trailers.iSectionSize3 AS SectionSize3,
+		Trailers.iSectionSize4 AS SectionSize4,
+		Trailers.iSectionSize5 AS SectionSize5,
+		Trailers.iSectionSize6 AS SectionSize6,
+		Trailers.iSectionSize7 AS SectionSize7,
+		Trailers.iSectionSize8 AS SectionSize8,
+		Trailers.iSectionSize9 AS SectionSize9,
+		Trailers.sRFIDTAG AS RFIDTAG,
+		Trailers.sDescription AS TrailerDescription,
+		Trailers.dtTID AS ValidFrom,
+		CONVERT(datetime, '9999-12-31') AS ValidTo
+FROM Contact.Trailers 
+WHERE Trailers.cRecordStatus = 'A'
+UNION
+SELECT 	-1 AS TrailerId,
+		'N/A' AS TrailerNumber, 
+		0 as SectionSize1,
+		0 as SectionSize2,
+		0 as SectionSize3,
+		0 as SectionSize4,
+		0 as SectionSize5,
+		0 as SectionSize6,
+		0 as SectionSize7,
+		0 as SectionSize8,
+		0 as SectionSize9,
+		'N/A' AS RFIDTAG,
+		'N/A' AS TrailerDescription,
+		'1753-01-01' AS ValidFrom,
+		'9999-12-31' AS ValidTo
+
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>256</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

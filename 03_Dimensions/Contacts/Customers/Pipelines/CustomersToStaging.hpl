@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>CustomersToStaging</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+      <parameter>
+        <name>TableName</name>
+        <default_value/>
+        <description/>
+      </parameter>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2024/12/12 16:50:28.652</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2024/12/12 16:50:28.652</modified_date>
+  </info>
+  <notepads>
+    <notepad>
+      <backgroundcolorblue>251</backgroundcolorblue>
+      <backgroundcolorgreen>232</backgroundcolorgreen>
+      <backgroundcolorred>201</backgroundcolorred>
+      <bordercolorblue>90</bordercolorblue>
+      <bordercolorgreen>58</bordercolorgreen>
+      <bordercolorred>14</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>90</fontcolorblue>
+      <fontcolorgreen>58</fontcolorgreen>
+      <fontcolorred>14</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <height>42</height>
+      <xloc>128</xloc>
+      <yloc>192</yloc>
+      <note>Get Last Loaded Date only
+on Infeed selection in the where clause shoud be only >= ?</note>
+      <width>320</width>
+    </notepad>
+  </notepads>
+  <order>
+    <hop>
+      <from>Infeed700 Customers</from>
+      <to>Staging Customers</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get Last Loaded Date</from>
+      <to>Infeed700 Customers</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Get Last Loaded Date</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Infeed700DW</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT 
+	   [LoadDate] as LastLoadedDate
+    FROM [Tracking].[IncrementalLoads]
+    WHERE [TableName] = '${TableName}';</sql>
+    <variables_active>Y</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>96</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Infeed700 Customers</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Infeed700</connection>
+    <execute_each_row>Y</execute_each_row>
+    <limit>0</limit>
+    <lookup>Get Last Loaded Date</lookup>
+    <sql>SELECT 
+		Customers.iCustomerId AS CustomerId,
+		Customers.sCustomerCode AS CustomerCode, 
+		Contacts.sContactName AS CustomerName,
+		Contacts.sContactAddress1 AS ContactAddress1,
+		Contacts.sContactAddress2 AS ContactAddress2,
+		Contacts.sContactAddress3 AS ContactAddress3,
+		Contacts.sContactAddress4 AS ContactAddress4,
+		Contacts.sContactPostCode AS ContactPostCode,
+		Contacts.sContactTelephoneNumber as ContactTelephoneNumber,
+		Contacts.sContactEMail AS ContactEMail,
+		GETDATE() AS ValidFrom,
+		CONVERT(datetime, '9999-12-31') as ValidTo
+	FROM Contact.Customers 
+	INNER JOIN  Contact.Contacts ON Contacts.iContactId = Customers.iContactId
+WHERE Customers.dtTID >= ? AND Customers.cRecordStatus='A'
+</sql>
+    <variables_active>Y</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>320</xloc>
+      <yloc>96</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Staging Customers</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>1000</commit>
+    <connection>Infeed700DWStaging</connection>
+    <fields>
+      <field>
+        <column_name>CustomerId</column_name>
+        <stream_name>CustomerId</stream_name>
+      </field>
+      <field>
+        <column_name>CustomerCode</column_name>
+        <stream_name>CustomerCode</stream_name>
+      </field>
+      <field>
+        <column_name>CustomerName</column_name>
+        <stream_name>CustomerName</stream_name>
+      </field>
+      <field>
+        <column_name>ContactAddress1</column_name>
+        <stream_name>ContactAddress1</stream_name>
+      </field>
+      <field>
+        <column_name>ContactAddress2</column_name>
+        <stream_name>ContactAddress2</stream_name>
+      </field>
+      <field>
+        <column_name>ContactAddress3</column_name>
+        <stream_name>ContactAddress3</stream_name>
+      </field>
+      <field>
+        <column_name>ContactAddress4</column_name>
+        <stream_name>ContactAddress4</stream_name>
+      </field>
+      <field>
+        <column_name>ContactPostCode</column_name>
+        <stream_name>ContactPostCode</stream_name>
+      </field>
+      <field>
+        <column_name>ContactTelephoneNumber</column_name>
+        <stream_name>ContactTelephoneNumber</stream_name>
+      </field>
+      <field>
+        <column_name>ContactEMail</column_name>
+        <stream_name>ContactEMail</stream_name>
+      </field>
+      <field>
+        <column_name>ValidFrom</column_name>
+        <stream_name>ValidFrom</stream_name>
+      </field>
+      <field>
+        <column_name>ValidTo</column_name>
+        <stream_name>ValidTo</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_keys>N</return_keys>
+    <schema>[Contact]</schema>
+    <specify_fields>Y</specify_fields>
+    <table>stg_dimCustomers</table>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>Y</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>496</xloc>
+      <yloc>96</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

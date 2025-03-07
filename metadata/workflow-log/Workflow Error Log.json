@@ -1,0 +1,11 @@
+{
+  "loggingParentsOnly": true,
+  "name": "Workflow Error Log",
+  "workflowToLog": [],
+  "intervalInSeconds": "30",
+  "executingPeriodically": false,
+  "pipelineFilename": "${PROJECT_HOME}/log_files/workflow_error_logs.hpl",
+  "executingAtEnd": true,
+  "enabled": true,
+  "executingAtStart": true
+}

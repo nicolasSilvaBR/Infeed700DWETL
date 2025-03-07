@@ -1,0 +1,9 @@
+reports@icmcsl.ie
+emailalerts@icmcsl.ie
+
+server
+smtp.office365.com
+587
+
+emailalerts@icmcsl.ie
+1984Icm*.*

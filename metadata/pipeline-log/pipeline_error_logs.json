@@ -1,0 +1,11 @@
+{
+  "pipelinesToLog": [],
+  "loggingParentsOnly": false,
+  "name": "pipeline_error_logs",
+  "intervalInSeconds": "30",
+  "executingPeriodically": false,
+  "pipelineFilename": "${PROJECT_HOME}/log_files/pipeline_error_logs.hpl",
+  "executingAtEnd": true,
+  "enabled": true,
+  "executingAtStart": true
+}
